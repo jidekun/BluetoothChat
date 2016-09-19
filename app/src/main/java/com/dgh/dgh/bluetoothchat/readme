@@ -1,0 +1,25 @@
+在整个开发过程中涉及的几个关键步骤
+1）判断蓝牙设备是否可用
+2）若蓝牙设备可用，判断是否开启
+       是：则不操作
+       否：开启蓝牙设备
+3）让设备可见（在一定的时间范围内）
+4）查看已经连接过的设备
+5）扫描附近的设备
+6）连接设备
+7）建立socket连接，读写消息
+8）退出程序时结束扫描和连接
+
+程序架构：
+ChatActivity：UI的变化 接收（发送）来自BluetoothChatService的消息，接收DeviceListActivity的消息
+DeviceListActivity：find device 选择device，返回device的Mac address
+BluetoothChatService：
+                                              接口：start() stop() Construction（Context，Handler） write（byte []）
+                                                       connect（BluetoothDevice ， boolean）
+                                              处理的工作：
+                                                       监听连接          连接       read   write
+各线程含义：
+ConnectThread：主动发起蓝牙连接线程（事件触发）
+ConnectedThread：蓝牙连接完成后读写消息（蓝牙连接成功后启动）
+AcceptThread：监听来自其他设备的蓝牙连接，若蓝牙连接成功，启动ConnectedThread读写（默认启动）
+监听蓝牙连接线程（相当于Socket编程中的Server）：
